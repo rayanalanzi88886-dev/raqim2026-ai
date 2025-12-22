@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التواصل والمحتوى - Social Hub</title>
+    <style>
+        :root {
+            --social-primary: #7b61ff;
+            --x-color: #ffffff;
+            --tiktok-color: #00f2ea;
+            --yt-color: #ff0000;
+            --ig-color: #ff006e;
+        }
+
+        body { margin: 0; background: #050505; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+
+        .social-canvas {
+            width: 100%;
+            max-width: 100%;
+            height: clamp(260px, 35vw, 500px);
+            position: relative;
+            background: radial-gradient(circle at center, #1a1033 0%, #050505 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(123, 97, 255, 0.2);
+        }
+
+        /* Center Content Hub */
+        .content-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: rgba(123, 97, 255, 0.1);
+            border: 2px solid var(--social-primary);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation: morph 8s ease-in-out infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            50% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+        }
+
+        .hub-core { width: 40px; height: 40px; background: var(--social-primary); border-radius: 50%; box-shadow: 0 0 30px var(--social-primary); }
+
+        /* Orbiting Icons */
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 1px dashed rgba(123, 97, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .orbit-1 { width: 250px; height: 250px; animation: rotate 15s linear infinite; }
+        .orbit-2 { width: 380px; height: 380px; animation: rotate 25s linear infinite reverse; }
+
+        @keyframes rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+        .social-node {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* Message Bubbles - AI Content Generation */
+        .msg-bubble {
+            position: absolute;
+            padding: 8px 15px;
+            background: rgba(123, 97, 255, 0.1);
+            border-right: 3px solid var(--social-primary);
+            color: #d1d1d1;
+            font-size: 11px;
+            border-radius: 4px;
+            white-space: nowrap;
+            animation: float-up 5s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(50px); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateY(-150px); opacity: 0; }
+        }
+
+        .data-stream {
+            position: absolute;
+            width: 1px;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, var(--social-primary), transparent);
+            animation: stream 2s linear infinite;
+        }
+
+        @keyframes stream { 0% { top: -100px; } 100% { top: 500px; } }
+    </style>
+</head>
+<body>
+    <div class="social-canvas">
+        <div class="content-hub"><div class="hub-core"></div></div>
+        
+        <div class="orbit orbit-1">
+            <div class="social-node" style="top:0; left:50%; transform:translateX(-50%); border-color: var(--x-color);">𝕏</div>
+            <div class="social-node" style="bottom:0; left:50%; transform:translateX(-50%); border-color: var(--yt-color);">▶</div>
+        </div>
+        
+        <div class="orbit orbit-2">
+            <div class="social-node" style="top:50%; right:0; transform:translateY(-50%); border-color: var(--tiktok-color);">♪</div>
+            <div class="social-node" style="top:50%; left:0; transform:translateY(-50%); border-color: var(--ig-color);">📸</div>
+        </div>
+
+        <div id="bubbles"></div>
+        <div id="streams"></div>
+    </div>
+
+    <script>
+        const texts = ['جاري إنشاء ثريد...', 'أنسنة النص برمجياً', 'تحليل تريند X', 'توليد وصف TikTok', 'تحسين الـ SEO'];
+        const container = document.getElementById('bubbles');
+        
+        setInterval(() => {
+            const b = document.createElement('div');
+            b.className = 'msg-bubble';
+            b.textContent = texts[Math.floor(Math.random() * texts.length)];
+            b.style.left = Math.random() * 80 + 10 + '%';
+            b.style.bottom = '20%';
+            container.appendChild(b);
+            setTimeout(() => b.remove(), 5000);
+        }, 1500);
+
+        const streamTarget = document.getElementById('streams');
+        const count = window.innerWidth < 768 ? 8 : 12;
+        for(let i=0; i<count; i++) {
+            const s = document.createElement('div');
+            s.className = 'data-stream';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.animationDelay = Math.random() * 2 + 's';
+            s.style.opacity = Math.random() * 0.3;
+            streamTarget.appendChild(s);
+        }
+    </script>
+</body>
+</html>

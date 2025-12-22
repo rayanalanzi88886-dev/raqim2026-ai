@@ -1,0 +1,8 @@
+
+{
+  "name": "Raqim AI (رقيم) - مولد أوامر الذكاء الاصطناعي",
+  "description": "An advanced AI-powered prompt engineering platform for generating, checking, and converting prompts for various AI models.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
