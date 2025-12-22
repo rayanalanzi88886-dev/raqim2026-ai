@@ -117,14 +117,6 @@ export const Footer: React.FC<{ lang: 'en' | 'ar' }> = ({ lang }) => {
           </div>
 
           <div className="flex flex-col md:flex-row gap-12">
-            <div className="block about-corp">
-              <h3 className="text-lg font-bold mb-4">{isAr ? 'شركة Raqim AI' : 'Raqim AI Inc.'}</h3>
-              <div className="text-sm text-gray-500 dark:text-gray-400 leading-loose">
-                {isAr ? 'شارع الذكاء الاصطناعي 123، حي التكنولوجيا' : '123 AI Street, Tech District'}<br />
-                {isAr ? 'مدينة نيجاتا، نيجاتا 950-0000' : 'Niigata City, Niigata 950-0000'}<br />
-                {isAr ? 'هاتف: 0000-000-025' : 'Phone: 025-000-0000'}
-              </div>
-            </div>
             <div className="block social">
               <h3 className="text-lg font-bold mb-4">{isAr ? 'حسابات التواصل' : 'Social Media'}</h3>
               <div className="flex flex-col gap-3">
