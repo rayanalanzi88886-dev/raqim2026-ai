@@ -3,7 +3,7 @@
  * Frontend client for Raqim API Worker (replaces direct Gemini calls)
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.raqim.me';
 
 // Map frontend ToolType enum to backend tool strings
 const TOOL_MAP: Record<string, string> = {
