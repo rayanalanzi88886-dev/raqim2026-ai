@@ -7,6 +7,7 @@ interface NavbarProps {
   onNavigate: (view: 'home' | 'tool') => void;
   lang: 'en' | 'ar';
   setLang: (lang: 'en' | 'ar') => void;
+  scrollToAbout?: () => void;
 }
 
 const NAV_TEXT = {
@@ -14,7 +15,7 @@ const NAV_TEXT = {
   ar: { top: 'الرئيسية', tools: 'الأدوات', about: 'عن الموقع', contact: 'اتصل بنا' }
 };
 
-export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNavigate, lang, setLang }) => {
+export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNavigate, lang, setLang, scrollToAbout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const t = NAV_TEXT[lang];
 
@@ -44,9 +45,9 @@ export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNa
                 </a>
               </li>
               <li>
-                <a href="#about" className="group flex flex-col items-center">
+                <button onClick={scrollToAbout} className="group flex flex-col items-center">
                   <span className="group-hover:text-[#FF4D00] transition-colors">{t.about}</span>
-                </a>
+                </button>
               </li>
               <li>
                 <a href="#contact" className="group flex flex-col items-center">
@@ -90,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNa
         <div className="flex flex-col items-center justify-center h-full gap-8 text-2xl font-bold font-serif">
           <button onClick={() => { onNavigate('home'); setIsMenuOpen(false); }}>{t.top}</button>
           <a href="#tools" onClick={() => setIsMenuOpen(false)}>{t.tools}</a>
-          <a href="#about" onClick={() => setIsMenuOpen(false)}>{t.about}</a>
+          <button onClick={() => { scrollToAbout?.(); setIsMenuOpen(false); }}>{t.about}</button>
           <a href="#contact" onClick={() => setIsMenuOpen(false)}>{t.contact}</a>
         </div>
       </div>

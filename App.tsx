@@ -155,6 +155,13 @@ const App: React.FC = () => {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
+  const scrollToAbout = () => {
+    const aboutSection = document.getElementById('vision');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
   
   // Advanced Tool State
   const [advancedParams, setAdvancedParams] = useState({
@@ -435,7 +442,7 @@ const App: React.FC = () => {
       className="min-h-screen flex flex-col transition-colors duration-500 bg-white dark:bg-black text-black dark:text-white"
       style={{ fontFamily: `"${fontFamily}", sans-serif` }}
     >
-      <Navbar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} onNavigate={setView} lang={lang} setLang={setLang} />
+      <Navbar isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} onNavigate={setView} lang={lang} setLang={setLang} scrollToAbout={scrollToAbout} />
 
       <main className="flex-grow pt-20">
         {view === 'home' ? (
@@ -838,6 +845,49 @@ const App: React.FC = () => {
             )}
           </div>
         )}
+
+        {/* Vision Section */}
+        <section id="vision" className="py-20 px-6 md:px-10 bg-gradient-to-b from-white to-gray-50 dark:from-black dark:to-gray-900 border-t border-gray-200 dark:border-gray-800">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-block px-6 py-2 border-2 border-[#FF4D00] rounded-full text-sm font-bold text-[#FF4D00] mb-8">
+              {lang === 'ar' ? 'الرؤية' : 'Vision'}
+            </div>
+            
+            <h2 className="text-3xl md:text-5xl font-bold mb-8 leading-tight">
+              {lang === 'ar' ? (
+                <>
+                  أين يلتقي الإبداع البشري بدقة الآلة.
+                </>
+              ) : (
+                <>
+                  Where Human Creativity Meets Machine Precision.
+                </>
+              )}
+            </h2>
+            
+            <div className={`text-lg md:text-xl leading-loose text-gray-700 dark:text-gray-300 space-y-6 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
+              {lang === 'ar' ? (
+                <>
+                  <p>
+                    في <span className="font-bold text-[#FF4D00]">رقيم</span>، نؤمن بأن الذكاء الاصطناعي هو أقوى أداة في عصرنا، ونحن شركاؤك الإبداعيون في صناعة الحوار مع الآلة لتحويل الأفكار المجردة إلى نتائج مذهلة.
+                  </p>
+                  <p>
+                    لا ندّعي أننا الأذكى أو الأفضل، في هذا العالم التقني المتسارع، إنما نملك طموحًا سعوديًا لا يعرف الحدود للتطور والتعلم المستمر. نحن نؤمن بأن الكمال رحلة وليس وجهة، وأن أفضل نسخة من <span className="font-bold text-[#FF4D00]">رقيم</span> هي التي سنبنيها معًا. أفكاركم وملاحظاتكم هي المحرك الأساسي لتطويرنا، فلا تترددوا في مشاركتنا أي مقترح أو فكرة عبر رابط التواصل أسفل الصفحة. طموحنا يكبر بكم.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    At <span className="font-bold text-[#FF4D00]">Raqim</span>, we believe that AI is the most powerful tool of our era, and we are your creative partners in crafting the dialogue with machines to transform abstract ideas into stunning results.
+                  </p>
+                  <p>
+                    We don't claim to be the smartest or the best in this fast-paced technical world. Instead, we have a boundless Saudi ambition for continuous development and learning. We believe that perfection is a journey, not a destination, and that the best version of <span className="font-bold text-[#FF4D00]">Raqim</span> is the one we will build together. Your ideas and feedback are the main driver of our development, so don't hesitate to share any suggestions or ideas via the contact link at the bottom of the page. Our ambition grows with you.
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+        </section>
       </main>
 
       <Footer lang={lang} />
