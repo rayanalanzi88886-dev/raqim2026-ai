@@ -148,6 +148,14 @@ const App: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [lang, setLang] = useState<'en' | 'ar'>('en');
   
+  // Smooth Scroll function
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  
   // Advanced Tool State
   const [advancedParams, setAdvancedParams] = useState({
     tone: 'Professional',
@@ -564,7 +572,13 @@ const App: React.FC = () => {
                         <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed font-light">
                           {cat.desc}
                         </p>
-                        <button className="px-8 py-3 border border-black dark:border-white rounded-full text-sm font-bold hover:bg-[#FF4D00] hover:border-[#FF4D00] hover:text-white transition-all duration-300">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollToSection('tools');
+                          }}
+                          className="px-8 py-3 border border-black dark:border-white rounded-full text-sm font-bold hover:bg-[#FF4D00] hover:border-[#FF4D00] hover:text-white transition-all duration-300"
+                        >
                           {t.viewWorks}
                         </button>
                       </div>
