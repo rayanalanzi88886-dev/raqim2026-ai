@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Instagram, Facebook, Twitter, Moon, Sun, Globe } from 'lucide-react';
+import { Menu, X, Instagram, Facebook, Twitter, Moon, Sun, Globe, Send, Mail } from 'lucide-react';
 
 interface NavbarProps {
   isDarkMode: boolean;
@@ -126,11 +126,33 @@ export const Footer: React.FC<{ lang: 'en' | 'ar' }> = ({ lang }) => {
               </div>
             </div>
             <div className="block social">
-              <h3 className="text-lg font-bold mb-4">{isAr ? 'تواصل اجتماعي' : 'Social'}</h3>
-              <div className="flex gap-4">
-                <a href="#" className="hover:text-[#FF4D00] transition-colors"><Instagram size={20} /></a>
-                <a href="#" className="hover:text-[#FF4D00] transition-colors"><Facebook size={20} /></a>
-                <a href="#" className="hover:text-[#FF4D00] transition-colors"><Twitter size={20} /></a>
+              <h3 className="text-lg font-bold mb-4">{isAr ? 'حسابات التواصل' : 'Social Media'}</h3>
+              <div className="flex flex-col gap-3">
+                <a 
+                  href="https://t.me/dr_basl" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm hover:text-[#FF4D00] transition-colors"
+                >
+                  <Send size={18} />
+                  <span>Telegram</span>
+                </a>
+                <a 
+                  href="https://x.com/hzbr_al?s=21" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm hover:text-[#FF4D00] transition-colors"
+                >
+                  <Twitter size={18} />
+                  <span>X (Twitter)</span>
+                </a>
+                <a 
+                  href="mailto:rayanalanzi88886@gmail.com"
+                  className="flex items-center gap-2 text-sm hover:text-[#FF4D00] transition-colors"
+                >
+                  <Mail size={18} />
+                  <span>Gmail</span>
+                </a>
               </div>
             </div>
           </div>
