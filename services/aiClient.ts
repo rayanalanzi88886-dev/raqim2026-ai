@@ -33,7 +33,7 @@ export interface AIClientRequest {
 
 export interface AIClientResponse {
   text: string;
-  provider: 'gemini' | 'openai_oss';
+  provider: 'openai_oss';
   model: string;
   latencyMs: number;
   usage: {

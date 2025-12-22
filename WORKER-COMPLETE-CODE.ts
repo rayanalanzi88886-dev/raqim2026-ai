@@ -16,7 +16,7 @@ interface AIRequest {
 
 interface AIResponse {
   text: string;
-  provider: 'gemini' | 'openai_oss';
+  provider: 'openai_oss';
   model: string;
   latencyMs: number;
   usage: {
@@ -32,7 +32,6 @@ interface ErrorResponse {
 }
 
 interface Env {
-  GEMINI_API_KEY: string;
   OPENAI_API_KEY: string;
   OPENAI_OSS_MODEL: string;
   ALLOWED_ORIGIN: string;
@@ -43,100 +42,13 @@ interface Env {
 }
 
 // ---- ROUTER ----
-const VISION_TOOLS = [
-  'image_to_prompt',
-  'image_to_text',
-  'two_images_to_prompt',
-  'image_prompt',
-  'video_prompt'
-];
-
-const OPENAI_TOOLS = [
-  'prompt_refiner',
-  'prompt_checker',
-  'advanced_prompt'
-];
-
-function routeToProvider(tool: string): 'gemini' | 'openai_oss' {
-  if (VISION_TOOLS.includes(tool)) {
-    return 'gemini';
-  }
-  if (OPENAI_TOOLS.includes(tool)) {
-    return 'openai_oss';
-  }
-  return 'gemini';
+// All tools now use OpenAI only
+function routeToProvider(tool: string): 'openai_oss' {
+  return 'openai_oss';
 }
 
-function getProviderModel(provider: 'gemini' | 'openai_oss', env: Env): string {
-  if (provider === 'openai_oss') {
-    return env.OPENAI_OSS_MODEL || 'gpt-4o-mini';
-  }
-  return 'gemini-2.0-flash-exp';
-}
-
-// ---- GEMINI PROVIDER ----
-async function callGemini(
-  request: AIRequest,
-  apiKey: string,
-  model: string
-): Promise<AIResponse> {
-  const startTime = Date.now();
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  
-  const parts: any[] = [];
-  if (request.system) {
-    parts.push({ text: request.system });
-  }
-  parts.push({ text: request.prompt });
-  
-  if (request.images && request.images.length > 0) {
-    for (const imageData of request.images) {
-      const match = imageData.match(/^data:image\/(\w+);base64,(.+)$/);
-      if (match) {
-        const [, mimeType, base64] = match;
-        parts.push({
-          inlineData: {
-            mimeType: `image/${mimeType}`,
-            data: base64
-          }
-        });
-      }
-    }
-  }
-  
-  const payload = {
-    contents: [{ parts }],
-    generationConfig: {
-      temperature: request.temperature ?? 0.7,
-      maxOutputTokens: request.maxOutputTokens ?? 2048,
-    }
-  };
-  
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Gemini API error: ${response.status} - ${error}`);
-  }
-  
-  const data = await response.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  const usage = {
-    inputTokens: data.usageMetadata?.promptTokenCount || 0,
-    outputTokens: data.usageMetadata?.candidatesTokenCount || 0
-  };
-  
-  return {
-    text,
-    provider: 'gemini',
-    model,
-    latencyMs: Date.now() - startTime,
-    usage
-  };
+function getProviderModel(provider: 'openai_oss', env: Env): string {
+  return env.OPENAI_OSS_MODEL || 'gpt-4o-mini';
 }
 
 // ---- OPENAI PROVIDER ----
@@ -313,11 +225,8 @@ export default {
       
       let result: AIResponse;
       
-      if (provider === 'gemini') {
-        result = await callGemini(body, env.GEMINI_API_KEY, model);
-      } else {
-        result = await callOpenAI(body, env.OPENAI_API_KEY, model);
-      }
+      // Use OpenAI for all tools
+      result = await callOpenAI(body, env.OPENAI_API_KEY, model);
       
       console.log(`[Raqim API] ✓ ${provider} ${result.latencyMs}ms tokens=${result.usage.inputTokens}+${result.usage.outputTokens}`);
       
