@@ -60,11 +60,26 @@ async function callOpenAI(
   const startTime = Date.now();
   const endpoint = 'https://api.openai.com/v1/chat/completions';
   
+  // Build messages with optional vision (images) support
   const messages: any[] = [];
   if (request.system) {
     messages.push({ role: 'system', content: request.system });
   }
-  messages.push({ role: 'user', content: request.prompt });
+
+  // If images are provided, use multi-part content for the user message
+  if (request.images && Array.isArray(request.images) && request.images.length > 0) {
+    const content: any[] = [{ type: 'text', text: request.prompt }];
+    for (const img of request.images) {
+      // img is expected to be a data URL (data:image/png;base64,...) or an https URL
+      content.push({
+        type: 'image_url',
+        image_url: { url: img }
+      });
+    }
+    messages.push({ role: 'user', content });
+  } else {
+    messages.push({ role: 'user', content: request.prompt });
+  }
   
   const payload = {
     model,
