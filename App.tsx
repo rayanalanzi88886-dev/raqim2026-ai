@@ -223,6 +223,8 @@ const App: React.FC = () => {
   const [isListening, setIsListening] = useState(false);
   
   const recognitionRef = useRef<any>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+  const pdfRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
@@ -327,6 +329,7 @@ const App: React.FC = () => {
   const [productKeywords, setProductKeywords] = useState('');
   const [productCompetitorUrl, setProductCompetitorUrl] = useState('');
   const [productActiveTab, setProductActiveTab] = useState('store');
+  const [isExporting, setIsExporting] = useState(false);
 
   // Gemini Media State
   const [isGeneratingMedia, setIsGeneratingMedia] = useState(false);
@@ -1041,6 +1044,35 @@ const App: React.FC = () => {
     );
   };
 
+  const handleDownloadPDF = async () => {
+    if (!pdfRef.current) return;
+    
+    setIsExporting(true);
+    try {
+      const canvas = await html2canvas(pdfRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: isDarkMode ? '#000000' : '#ffffff',
+        windowWidth: 800 // Fixed width for consistent PDF layout
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width / 2, canvas.height / 2]
+      });
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 2, canvas.height / 2);
+      pdf.save(`raqim-analysis-${Date.now()}.pdf`);
+    } catch (error) {
+      console.error('PDF Export Error:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const renderProductResult = (text: string) => {
     const extract = (marker: string) => {
       const regex = new RegExp(`\\[${marker}\\]:?([\\s\\S]*?)(?=\\[[A-Z_]+\\]|$)`, 'i');
@@ -1072,7 +1104,107 @@ const App: React.FC = () => {
     }
 
     return (
-      <div className="space-y-6 animate-in fade-in duration-500">
+      <div ref={resultRef} className="space-y-6 animate-in fade-in duration-500 relative">
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-2 mb-2 no-print">
+          <button
+            onClick={handleDownloadPDF}
+            disabled={isExporting}
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-xl text-xs font-bold hover:bg-gray-50 dark:hover:bg-gray-900 transition-all shadow-sm disabled:opacity-50"
+          >
+            {isExporting ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <FileText size={14} className="text-[#FF4D00]" />
+            )}
+            {lang === 'ar' ? 'تحميل التقرير PDF' : 'Download PDF Report'}
+          </button>
+        </div>
+
+        {/* Hidden Printable Version */}
+        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+          <div ref={pdfRef} className={`p-10 w-[800px] space-y-8 ${isDarkMode ? 'bg-black text-white' : 'bg-white text-black'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="flex justify-between items-center border-b-2 border-[#FF4D00] pb-6">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tighter">RAQIM AI</h1>
+                <p className="text-sm opacity-60">{lang === 'ar' ? 'تقرير تحليل المنتج الذكي' : 'Smart Product Analysis Report'}</p>
+              </div>
+              <div className="text-right text-xs opacity-40">
+                {new Date().toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US')}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold border-s-4 border-[#FF4D00] ps-3">{lang === 'ar' ? 'العناوين المقترحة' : 'Suggested Headlines'}</h2>
+              <div className="grid grid-cols-1 gap-3">
+                {headlines.map((h, i) => (
+                  <div key={i} className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-800 font-serif italic">
+                    {h.replace(/^[-*•\d.]+\s*/, '')}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold border-s-4 border-[#FF4D00] ps-3">{lang === 'ar' ? 'وصف المتجر' : 'Store Description'}</h2>
+              <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-xl text-base leading-relaxed whitespace-pre-wrap">
+                {storeDesc}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold border-s-4 border-[#FF4D00] ps-3">{lang === 'ar' ? 'نقاط القوة والمميزات' : 'Key Features & Points'}</h2>
+              <div className="grid grid-cols-1 gap-3">
+                {keyPoints.map((p, i) => (
+                  <div key={i} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <div className="w-2 h-2 rounded-full bg-[#FF4D00]"></div>
+                    <p className="text-sm">{p.replace(/^[-*•\d.]+\s*/, '')}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold border-s-4 border-[#FF4D00] ps-3">{lang === 'ar' ? 'محتوى التواصل الاجتماعي' : 'Social Media Content'}</h2>
+              <div className="p-6 bg-gray-50 dark:bg-gray-900 rounded-xl font-mono text-sm whitespace-pre-wrap">
+                {socialMedia}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold border-s-4 border-[#FF4D00] ps-3">SEO & Meta</h2>
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-sm italic">
+                  {seoMeta}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold border-s-4 border-[#FF4D00] ps-3">{lang === 'ar' ? 'الكلمات المفتاحية' : 'Keywords'}</h2>
+                <div className="flex flex-wrap gap-2">
+                  {productKeywords.split(',').map((k, i) => (
+                    <span key={i} className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-[10px] font-bold">
+                      #{k.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {comparisonInsight && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-bold border-s-4 border-blue-500 ps-3">{lang === 'ar' ? 'التحليل التنافسي' : 'Competitive Analysis'}</h2>
+                <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-sm italic border border-blue-100 dark:border-blue-800">
+                  {comparisonInsight}
+                </div>
+              </div>
+            )}
+
+            <div className="pt-10 border-t border-gray-100 dark:border-gray-800 text-center text-[10px] opacity-30">
+              Generated by Raqim AI - Creative Prompt Engineering & Branding Analysis
+            </div>
+          </div>
+        </div>
+
         {/* Headlines Section */}
         <div className="p-6 bg-black text-white dark:bg-white dark:text-black rounded-2xl shadow-xl">
           <h4 className="text-[10px] uppercase tracking-widest opacity-60 mb-4 flex items-center gap-2">
