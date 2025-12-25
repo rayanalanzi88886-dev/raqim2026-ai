@@ -1530,6 +1530,23 @@ const App: React.FC = () => {
               </div>
             </section>
 
+            {/* Prompts 2025 Section */}
+            <section className="py-16 px-6 md:px-10" id="prompts-2025">
+              <div className="max-w-7xl mx-auto">
+                <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                  <div className="flex-1">
+                    <h2 className="text-3xl md:text-4xl font-serif font-medium mb-3">{lang === 'ar' ? 'برومتات 2025' : 'Prompts 2025'}</h2>
+                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl">{lang === 'ar' ? 'استعرض أفضل 50 برومبت الأكثر استخداماً وفعالية في 2025 — جاهزة للاستخدام في الأعمال، التسويق، توليد الصور، البرمجة و SEO.' : 'Browse the Top 50 most effective prompts of 2025 — ready-to-use for productivity, marketing, image generation, coding, and SEO.'}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <a href="/prompts-2025.html" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#FF4D00] text-white rounded-xl font-bold hover:bg-[#e64600] transition-all shadow-lg text-sm">
+                      {lang === 'ar' ? 'فتح المكتبة' : 'Open Library'}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* Customizer Section */}
             <section className="py-20 px-6 md:px-10 border-t border-gray-100 dark:border-gray-800">
                <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">

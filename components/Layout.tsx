@@ -11,8 +11,8 @@ interface NavbarProps {
 }
 
 const NAV_TEXT = {
-  en: { top: 'Top', tools: 'Tools', about: 'About', contact: 'Contact' },
-  ar: { top: 'الرئيسية', tools: 'الأدوات', about: 'عن الموقع', contact: 'اتصل بنا' }
+  en: { top: 'Top', tools: 'Tools', prompts2025: 'Prompts 2025', about: 'About', contact: 'Contact' },
+  ar: { top: 'الرئيسية', tools: 'الأدوات', prompts2025: 'برومتات 2025', about: 'عن الموقع', contact: 'اتصل بنا' }
 };
 
 export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNavigate, lang, setLang, scrollToAbout }) => {
@@ -42,6 +42,11 @@ export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNa
               <li>
                 <a href="#tools" className="group flex flex-col items-center">
                   <span className="group-hover:text-[#FF4D00] transition-colors">{t.tools}</span>
+                </a>
+              </li>
+              <li>
+                <a href="/prompts-2025.html" target="_blank" rel="noopener" className="group flex flex-col items-center">
+                  <span className="group-hover:text-[#FF4D00] transition-colors">{t.prompts2025}</span>
                 </a>
               </li>
               <li>
@@ -91,6 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isDarkMode, toggleDarkMode, onNa
         <div className="flex flex-col items-center justify-center h-full gap-8 text-2xl font-bold font-serif">
           <button onClick={() => { onNavigate('home'); setIsMenuOpen(false); }}>{t.top}</button>
           <a href="#tools" onClick={() => setIsMenuOpen(false)}>{t.tools}</a>
+            <a href="/prompts-2025.html" onClick={() => setIsMenuOpen(false)}>{t.prompts2025}</a>
           <button onClick={() => { scrollToAbout?.(); setIsMenuOpen(false); }}>{t.about}</button>
           <a href="#contact" onClick={() => setIsMenuOpen(false)}>{t.contact}</a>
         </div>
