@@ -67,6 +67,14 @@
         background: #999;
       }
 
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
       /* Utility classes to mimic Frame CSS */
       .framehead {
         font-family: 'Playfair Display', 'Amiri', serif;

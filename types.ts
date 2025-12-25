@@ -13,13 +13,20 @@ export enum ToolType {
   IMAGE_TO_TEXT = 'IMAGE_TO_TEXT',
   TWO_IMAGES_TO_PROMPT = 'TWO_IMAGES_TO_PROMPT',
   PRODUCT_DESC = 'PRODUCT_DESC',
-  BLOG_TO_THREAD = 'BLOG_TO_THREAD'
+  BLOG_TO_THREAD = 'BLOG_TO_THREAD',
+  DIALECT_CONVERTER = 'DIALECT_CONVERTER',
+  AI_PERSONA = 'AI_PERSONA',
+  SEO_META = 'SEO_META',
+  HASHTAG_GEN = 'HASHTAG_GEN',
+  PROMPT_BUILDER = 'PROMPT_BUILDER',
+  BRAND_STRATEGY = 'BRAND_STRATEGY'
 }
 
 export interface ToolMetadata {
   id: ToolType;
   title: string;
   description: string;
+  detailedDescription?: string;
   icon: ReactNode;
   placeholder: string;
   promptTemplate: string;

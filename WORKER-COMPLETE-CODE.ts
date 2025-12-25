@@ -34,6 +34,7 @@ interface ErrorResponse {
 interface Env {
   OPENAI_API_KEY: string;
   OPENAI_OSS_MODEL: string;
+  GEMINI_API_KEY?: string;
   ALLOWED_ORIGIN: string;
   JINA_API_KEY?: string;
   ENVIRONMENT: string;
@@ -117,6 +118,33 @@ async function callOpenAI(
     latencyMs: Date.now() - startTime,
     usage
   };
+}
+
+// ---- GEMINI MEDIA PROVIDER ----
+async function callGeminiMedia(
+  prompt: string,
+  type: 'image' | 'video',
+  apiKey: string
+): Promise<any> {
+  const model = type === 'video' ? 'veo-2' : 'imagen-3';
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:predict?key=${apiKey}`;
+
+  const payload = {
+    instances: [{ prompt }]
+  };
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Gemini Media API error: ${response.status} - ${error}`);
+  }
+
+  return await response.json();
 }
 
 // ---- MIDDLEWARE ----
@@ -216,6 +244,25 @@ export default {
     }
     
     const url = new URL(request.url);
+
+    // 1. AI Media Generation (Gemini)
+    if (url.pathname === '/api/ai/media') {
+      if (!env.GEMINI_API_KEY) {
+        return jsonError('Gemini API Key not configured', 'CONFIG_ERROR', 500, allowedOrigin, env);
+      }
+      try {
+        const { prompt, type } = await request.json() as { prompt: string; type: 'image' | 'video' };
+        const result = await callGeminiMedia(prompt, type, env.GEMINI_API_KEY);
+        return new Response(JSON.stringify(result), {
+          status: 200,
+          headers: buildCORSHeaders(allowedOrigin)
+        });
+      } catch (error: any) {
+        return jsonError('Media generation failed', 'PROVIDER_ERROR', 500, allowedOrigin, env, error.message);
+      }
+    }
+
+    // 2. AI Text Generation (OpenAI)
     if (url.pathname !== '/api/ai/generate') {
       return jsonError('Endpoint not found', 'NOT_FOUND', 404, allowedOrigin, env);
     }

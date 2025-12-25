@@ -18,7 +18,13 @@ const TOOL_MAP: Record<string, string> = {
   'IMAGE_TO_TEXT': 'image_to_text',
   'TWO_IMAGES_TO_PROMPT': 'two_images_to_prompt',
   'PRODUCT_DESC': 'product_desc',
-  'BLOG_TO_THREAD': 'blog_to_thread'
+  'BLOG_TO_THREAD': 'blog_to_thread',
+  'DIALECT_CONVERTER': 'dialect_converter',
+  'AI_PERSONA': 'ai_persona',
+  'SEO_META': 'seo_meta',
+  'HASHTAG_GEN': 'hashtag_gen',
+  'PROMPT_BUILDER': 'prompt_builder',
+  'BRAND_STRATEGY': 'brand_strategy'
 };
 
 export interface AIClientRequest {
@@ -40,6 +46,12 @@ export interface AIClientResponse {
     inputTokens: number;
     outputTokens: number;
   };
+}
+
+export interface AIMediaResponse {
+  url: string;
+  type: 'image' | 'video';
+  revisedPrompt?: string;
 }
 
 /**
@@ -77,6 +89,35 @@ export async function generateAI(request: AIClientRequest): Promise<AIClientResp
 }
 
 /**
+ * Generate Media (Image/Video) via Gemini (Imagen-3 / Veo)
+ */
+export async function generateMedia(prompt: string, type: 'image' | 'video'): Promise<AIMediaResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/ai/media`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt,
+        type,
+        model: type === 'image' ? 'imagen-3' : 'veo'
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Media generation failed');
+    }
+
+    return await response.json();
+  } catch (error: any) {
+    console.error('Media Client Error:', error);
+    throw new Error(error.message || 'Failed to generate media');
+  }
+}
+
+/**
  * Fetch URL content via Worker (if we move Jina to backend)
  * For now, keep this client-side or implement in Worker later
  */
@@ -93,7 +134,9 @@ export async function fetchUrlContent(url: string): Promise<string> {
       throw new Error(`Failed to fetch URL: ${response.statusText}`);
     }
 
-    return await response.text();
+    const text = await response.text();
+    // Truncate to 15,000 characters to avoid prompt limit errors
+    return text.length > 15000 ? text.substring(0, 15000) + "..." : text;
   } catch (error) {
     console.error("Jina Reader Error:", error);
     throw new Error("Failed to extract content from the URL.");
