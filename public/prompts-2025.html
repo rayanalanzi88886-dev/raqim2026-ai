@@ -528,20 +528,43 @@ Post-Launch:
   </div>
 
   <script>
-    function copyPrompt(id) {
+    // نسخ البرومبت مع مسار احتياطي يعمل على المتصفحات التي لا تدعم navigator.clipboard
+    function copyPrompt(id, evt) {
       const element = document.getElementById(id);
-      const text = element.innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = event.target;
-        btn.textContent = '✅ تم النسخ';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = '📋 نسخ';
-          btn.classList.remove('copied');
-        }, 2000);
-      }).catch(() => {
-        alert('حدث خطأ في النسخ. جرب مرة أخرى.');
-      });
+      const text = element?.innerText || '';
+      const btn = evt?.currentTarget || evt?.target || document.activeElement;
+
+      const copyWithClipboard = () => navigator.clipboard.writeText(text);
+
+      const copyWithFallback = () => {
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.top = '-1000px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(textarea);
+          ok ? resolve() : reject();
+        });
+      };
+
+      (navigator.clipboard ? copyWithClipboard() : copyWithFallback())
+        .catch(copyWithFallback)
+        .then(() => {
+          if (btn) {
+            btn.textContent = '✅ تم النسخ';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = '📋 نسخ';
+              btn.classList.remove('copied');
+            }, 2000);
+          }
+        })
+        .catch(() => {
+          alert('حدث خطأ في النسخ. جرب مرة أخرى.');
+        });
     }
   </script>
 </body>
