@@ -219,7 +219,7 @@ const App: React.FC = () => {
   const [iconColor, setIconColor] = useState('#FF4D00');
   const [fontFamily, setFontFamily] = useState('Inter');
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [lang, setLang] = useState<'en' | 'ar'>('en');
+  const [lang, setLang] = useState<'en' | 'ar'>('ar');
   const [isListening, setIsListening] = useState(false);
   
   const recognitionRef = useRef<any>(null);
